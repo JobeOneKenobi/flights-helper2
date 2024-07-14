@@ -1,7 +1,6 @@
 # Main function to run everything right now, still testing locally
 from flights.fast_flights import FlightData, Passengers, create_filter, get_flights, Airport
 # Importing the entire fast_flights module
-import flights.generate_enums as gen_enums
 
 import configparser
 # My functions
@@ -13,12 +12,13 @@ config.read('josephs_preferences.ini')  # Read the configuration file for the us
 
 # Start by pulling preferences from user's config file (in this case me)
 home_airport = config['basic info']['home_airport']
-destination = "DCA"
+destination = "DC"
 
 
 if __name__ == '__main__':
     # Find nearby airports to the destination
     nearby_airports_df = find_nearby_airports(destination)
+    print(nearby_airports_df)
     nearby_airports = nearby_airports_df['code'].tolist()  # This includes the input airport if given one
 
     # Prepare to collect all flight results in a dictionary
