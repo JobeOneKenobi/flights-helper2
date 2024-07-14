@@ -1,0 +1,3 @@
+[submodule "flights"]
+	path = flights
+	url = https://github.com/AWeirdDev/flights
