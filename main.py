@@ -45,8 +45,17 @@ if __name__ == '__main__':
             ),
         )
 
-        # Get flights with the filter
+        # Get flights
         result = get_flights(filter)
+
+        # This is the updated functionality for the fast-flights script to enable prices
+        # BUT it's currently not working, implement later once I've tested it and it works in seperate script / project
+        # # Get flights with the filter
+        # result = get_flights(filter,
+        #                      dangerously_allow_looping_last_item=True,
+        #                      #cookies=Cookies.new().to_dict(),  #Need to figure out where Cookis is stored and referenced
+        #                      currency="USD",
+        #                      language="en")
 
         # Store the results in the dictionary
         all_flights_dict[airport] = result.flights
