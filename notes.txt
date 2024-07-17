@@ -31,3 +31,17 @@ In progress / done / todo
 check_airports
     find nearby airports based off city or airport code - done
         add spellcheck / autocorrect for common airports i fly
+
+Next thing to work on:
+Logic
+    need logic / checklist for the code to run, whether im using it via my computer, and typing text
+    in the console, or via j.o.e texts where it asks questions / confirms understanding until every
+    box is checked, and then it runs a search
+
+    it will start by pulling from preferences file then ask questions until complete
+
+    stage 1- display results
+
+    stage 2 - new set of logic to determine whether the results are satisfactory / run followup searches
+
+    stage 3 - need logic to determine when to start a new search (this should be simple)
