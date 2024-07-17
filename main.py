@@ -3,9 +3,18 @@ from flights.fast_flights import FlightData, Passengers, create_filter, get_flig
 # Importing the entire fast_flights module
 
 import configparser
+import openai
+from openai import OpenAI
 # My functions
 from flight_times import find_shortest_flight
 from check_airports import find_nearby_airports
+from checklist_logic_ai import chat_flight_checklist_request_initial
+from checklist_logic import checklist, fix_dates
+from flights_functions import flight_filter
+
+# SETUP --------------------------------------------------------------------------------------------
+# Initiate OpenAI
+client = OpenAI()
 
 # Load config files
 user_config = configparser.ConfigParser()  # Create a ConfigParser object
@@ -15,15 +24,42 @@ user_config.read('josephs_preferences.ini')  # Read the configuration file for t
 config = configparser.ConfigParser()
 config.read('config.ini')  # Read the config file for passwords and stuff
 
-# Start by pulling preferences from user's config file (in this case me)  and other relevant info
-home_airport = user_config['basic info']['home_airport']
-destination = "DC"
+# Pull the api key from the config file
+openai_api_key = config['openai']['api_key']
+# Configure the api key
+openai.api_key = openai_api_key
 
-
+# MAIN CODE ------------------------------------------------------------------------------------------
 if __name__ == '__main__':
+    # STEP 1 - Gather & filter travel request -------------------------------------------------------
+    # Imported blank checklist from checklist_logic script
+
+    # Optionally pre-fill in checklist here is desired (Not using now, would need to change chat request)
+
+    # Prompt the user for flight info (For testing purposes, this will be text-based in final version)
+    user_input = input("Hello! Tell me about the flight you'd like to book!")
+
+    # Extract relevant flight info from user's message using OpenAI ChatGPT 3.5 API
+    updated_checklist = chat_flight_checklist_request_initial(user_input)
+    print('\n\nUpdated_checklist! \n')
+    print(updated_checklist)
+    print('Type', type(updated_checklist))
+
+    # Add code to fix / check the ai results
+    updated_checklist['departure_date'] = fix_dates(updated_checklist['departure_date'])
+    updated_checklist['return_date'] = fix_dates(updated_checklist['return_date'])
+
+    print('Fixed checklist\n', updated_checklist)
+
+    # Add info to any missing blanks from user's config file / context
+    # CODE HERE
+
+    # Check travel request info is complete
+
+    # STEP 2 - Initiate flight search & process request --------------------------------------------
     # Find nearby airports to the destination
-    nearby_airports_df = find_nearby_airports(destination)
-    print(nearby_airports_df)
+    nearby_airports_df = find_nearby_airports(updated_checklist['destination'])
+    print('Nearby Airports: \n', nearby_airports_df)
     nearby_airports = nearby_airports_df['code'].tolist()  # This includes the input airport if given one
 
     # Prepare to collect all flight results in a dictionary
@@ -32,35 +68,10 @@ if __name__ == '__main__':
     # Search for flights from home airport to each nearby airport
     for airport in nearby_airports:
         # Create a new filter for each destination airport
-        filter = create_filter(
-            flight_data=[
-                FlightData(
-                    date="2024-09-02",  # Date of departure
-                    from_airport=home_airport,
-                    to_airport=airport
-                ),
-            ],
-            trip="one-way",  # Trip (round-trip, one-way, multi-city)
-            seat="economy",  # Seat (economy, premium-economy, business or first)
-            passengers=Passengers(
-                adults=1,
-                children=0,
-                infants_in_seat=0,
-                infants_on_lap=0
-            ),
-        )
-
+        filter = flight_filter(updated_checklist['departure_date'],
+                               updated_checklist['home_airport'], airport)
         # Get flights
         result = get_flights(filter)
-
-        # This is the updated functionality for the fast-flights script to enable prices
-        # BUT it's currently not working, implement later once I've tested it and it works in seperate script / project
-        # # Get flights with the filter
-        # result = get_flights(filter,
-        #                      dangerously_allow_looping_last_item=True,
-        #                      #cookies=Cookies.new().to_dict(),  #Need to figure out where Cookis is stored and referenced
-        #                      currency="USD",
-        #                      language="en")
 
         # Store the results in the dictionary
         all_flights_dict[airport] = result.flights
