@@ -7,11 +7,16 @@ import configparser
 from flight_times import find_shortest_flight
 from check_airports import find_nearby_airports
 
-config = configparser.ConfigParser()  # Create a ConfigParser object
-config.read('josephs_preferences.ini')  # Read the configuration file for the user (me)
+# Load config files
+user_config = configparser.ConfigParser()  # Create a ConfigParser object
+user_config.read('josephs_preferences.ini')  # Read the configuration file for the user (me)
+# Before pushing to heroku and making work over text, configure api key to be stored in heroku
+# Ask chat for help
+config = configparser.ConfigParser()
+config.read('config.ini')  # Read the config file for passwords and stuff
 
-# Start by pulling preferences from user's config file (in this case me)
-home_airport = config['basic info']['home_airport']
+# Start by pulling preferences from user's config file (in this case me)  and other relevant info
+home_airport = user_config['basic info']['home_airport']
 destination = "DC"
 
 

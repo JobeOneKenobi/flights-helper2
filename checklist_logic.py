@@ -2,6 +2,7 @@
 # In progress -> ACTIVELY being worked on
 # STATUS: basic working, needs good bit of work though
 # This could be a use case for chatGPT-4 / plus, or maybe even community
+    # Tested it briefly with 3.5 and it worked well
 
 import re
 from datetime import datetime
@@ -12,8 +13,7 @@ checklist = {
     'destination': None,
     'departure_date': None,
     'return_date': None,
-    'airline': None,
-    'seat_class': None,
+    'airline_preference': None,
 }
 
 
