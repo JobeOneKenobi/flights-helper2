@@ -20,7 +20,7 @@ def chat_flight_checklist_request_initial(user_message):
     system_message_content = f"""you are flight booking assistant text processor. based off context, match the users input to the most correct items from the following list:
     checklist = {{ 'home_airport': None, 'destination': None, 'departure_date': None, 'return_date': None, 'airline_preference': None }}
     Your response should follow the exact same formatting as the checklist, replacing None entries with data from the user's input
-    Pertinent Information: {pertinent_info} Use the same date formatting in your responses"""
+    Pertinent Information: {pertinent_info} Use the same date formatting in your responses. If only given one airport / location, assume it is the destination."""
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-16k",

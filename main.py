@@ -5,6 +5,7 @@ from flights.fast_flights import FlightData, Passengers, create_filter, get_flig
 import configparser
 import openai
 from openai import OpenAI
+import pandas as pd
 # My functions
 from flight_times import find_shortest_flight
 from check_airports import find_nearby_airports
@@ -37,7 +38,8 @@ if __name__ == '__main__':
     # Optionally pre-fill in checklist here is desired (Not using now, would need to change chat request)
 
     # Prompt the user for flight info (For testing purposes, this will be text-based in final version)
-    user_input = input("Hello! Tell me about the flight you'd like to book!")
+    #user_input = input("Hello! Tell me about the flight you'd like to book!")
+    user_input = "RSW to LAX 9/12 - 9/15"
 
     # Extract relevant flight info from user's message using OpenAI ChatGPT 3.5 API
     updated_checklist = chat_flight_checklist_request_initial(user_input)
@@ -49,9 +51,12 @@ if __name__ == '__main__':
     updated_checklist['departure_date'] = fix_dates(updated_checklist['departure_date'])
     updated_checklist['return_date'] = fix_dates(updated_checklist['return_date'])
 
-    print('Fixed checklist\n', updated_checklist)
-
     # Add info to any missing blanks from user's config file / context
+    # Pulls default home airport if none found / stated in user's request
+    if updated_checklist['home_airport'] is None:
+        updated_checklist['home_airport'] = user_config['basic info']['home_airport']
+
+    print('Updated checklist\n', updated_checklist)
     # CODE HERE
 
     # Check travel request info is complete
@@ -79,6 +84,9 @@ if __name__ == '__main__':
     # The price is currently... low/typical/high
     print("The price is currently", result.current_price)
 
+    df_flights = pd.DataFrame(all_flights_dict.items())
+    df_flights.to_csv('flights_output.csv', index=False)
+
     # Iterate over each destination airport and its flights
     for airport, flights in all_flights_dict.items():
         print(f"\nFlights to {airport}:")
@@ -91,3 +99,14 @@ if __name__ == '__main__':
         # # Print all flights for this airport
         # for flight in flights:
         #     print(flight)
+    print('\n\n Flight info Test\n')
+    #print(all_flights_dict.items(1))
+
+    # # for testing just one flight entry
+    # filter = get_flights(updated_checklist['departure_date'],
+    #                        updated_checklist['home_airport'], updated_checklist['destination'])
+
+    # Get flights for the created filter
+    result1 = get_flights(filter)
+    flight_results_test = result1.flights
+    print(result1.flights[0])
