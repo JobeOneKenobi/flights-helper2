@@ -12,6 +12,7 @@ from check_airports import find_nearby_airports
 from checklist_logic_ai import chat_flight_checklist_request_initial
 from checklist_logic import checklist, fix_dates
 from flights_functions import flight_filter
+from program_outputs_flight_results import print_flight_info
 
 # SETUP --------------------------------------------------------------------------------------------
 # Initiate OpenAI
@@ -40,12 +41,12 @@ if __name__ == '__main__':
     # Prompt the user for flight info (For testing purposes, this will be text-based in final version)
     #user_input = input("Hello! Tell me about the flight you'd like to book!")
     user_input = "RSW to LAX 9/12 - 9/15"
+    shortest_flights_dict = {}
 
     # Extract relevant flight info from user's message using OpenAI ChatGPT 3.5 API
     updated_checklist = chat_flight_checklist_request_initial(user_input)
-    print('\n\nUpdated_checklist! \n')
+    print('Updated_checklist!')
     print(updated_checklist)
-    print('Type', type(updated_checklist))
 
     # Add code to fix / check the ai results
     updated_checklist['departure_date'] = fix_dates(updated_checklist['departure_date'])
@@ -56,7 +57,8 @@ if __name__ == '__main__':
     if updated_checklist['home_airport'] is None:
         updated_checklist['home_airport'] = user_config['basic info']['home_airport']
 
-    print('Updated checklist\n', updated_checklist)
+    print('\nFormatted checklist\n', updated_checklist)
+
     # CODE HERE
 
     # Check travel request info is complete
@@ -64,7 +66,7 @@ if __name__ == '__main__':
     # STEP 2 - Initiate flight search & process request --------------------------------------------
     # Find nearby airports to the destination
     nearby_airports_df = find_nearby_airports(updated_checklist['destination'])
-    print('Nearby Airports: \n', nearby_airports_df)
+    print('\nNearby Airports: \n', nearby_airports_df)
     nearby_airports = nearby_airports_df['code'].tolist()  # This includes the input airport if given one
 
     # Prepare to collect all flight results in a dictionary
@@ -87,26 +89,35 @@ if __name__ == '__main__':
     df_flights = pd.DataFrame(all_flights_dict.items())
     df_flights.to_csv('flights_output.csv', index=False)
 
+    print('\n------------------Flight Results---------------\n')
     # Iterate over each destination airport and its flights
     for airport, flights in all_flights_dict.items():
-        print(f"\nFlights to {airport}:")
+        #print(f"\nFlights to {airport}:")
 
         # Find and print the shortest flight
-        shortest_flight = find_shortest_flight(flights)
+        #shortest_flight = find_shortest_flight(flights)
         print(f"The shortest flight to {airport} is:")
-        print(shortest_flight)
+        shortest_flight_iter = find_shortest_flight(flights)   # Finds the shortest flight to this airport
+
+        # Prints shortest flight
+        print_flight_info(shortest_flight_iter, show_duration=True)
+
+        # Saves the shortest flight and the airport to a new data structure / dict
+        shortest_flights_dict[airport] = shortest_flight_iter  # IDK if I'll need this but leave for now, one method to
+        # store favorite flights
+        #print(all_flights_dict.items)
+
 
         # # Print all flights for this airport
         # for flight in flights:
         #     print(flight)
-    print('\n\n Flight info Test\n')
-    #print(all_flights_dict.items(1))
 
     # # for testing just one flight entry
     # filter = get_flights(updated_checklist['departure_date'],
     #                        updated_checklist['home_airport'], updated_checklist['destination'])
 
-    # Get flights for the created filter
-    result1 = get_flights(filter)
-    flight_results_test = result1.flights
-    print(result1.flights[0])
+    # Un-formatted flight info
+    #print(all_flights_dict['SNA'][0])
+
+    # Formatted flight info
+    #print_flight_info(all_flights_dict['SNA'][0])

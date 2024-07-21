@@ -1,0 +1,68 @@
+# Notes relevant to what I'm currently working on
+# Edit the flight class so that it stores airports, or find another way to do this later on in terms of how I store /
+ave the data (other way might be easier like storing the dicts in labeled items or something or naming tche lists / dicts
+To add the airport information to the Flight objects and store it in the all_flights_dict, you will need to update the Flight class to include departure_airport and arrival_airport attributes. Then, modify the code that creates Flight objects to include these new attributes.
+
+Assuming you have control over the Flight class definition and the get_flights function, here's how you can do it:
+
+Update the Flight class to include departure_airport and arrival_airport attributes.
+python
+Copy code
+class Flight:
+    def __init__(self, name, departure, arrival, duration, stops, price, departure_airport, arrival_airport):
+        self.name = name
+        self.departure = departure
+        self.arrival = arrival
+        self.duration = duration
+        self.stops = stops
+        self.price = price
+        self.departure_airport = departure_airport
+        self.arrival_airport = arrival_airport
+
+    def __repr__(self):
+        return (f"Flight(name='{self.name}', departure='{self.departure}', arrival='{self.arrival}', "
+                f"duration='{self.duration}', stops={self.stops}, price={self.price}, "
+                f"departure_airport='{self.departure_airport}', arrival_airport='{self.arrival_airport}')")
+Modify the get_flights function to include airport information when creating Flight objects.
+Assuming the get_flights function looks something like this:
+
+python
+Copy code
+def get_flights(filter):
+    # Sample implementation of the function
+    # This should return an object with a 'flights' attribute that is a list of Flight objects
+    flights = [
+        Flight(name='Delta', departure='7:00 AM on Thu, Sep 12', arrival='10:55 AM on Thu, Sep 12',
+               duration='6 hr 55 min', stops=1, price=200.0,
+               departure_airport=filter['home_airport'], arrival_airport=filter['destination'])
+        # Add more flights as needed
+    ]
+    return type('Result', (object,), {'flights': flights})()  # Creates an anonymous object with a 'flights' attribute
+Update your main script to pass the new attributes when creating Flight objects.
+Here’s how you can update your main script to include these new attributes:
+
+python
+Copy code
+# Prepare to collect all flight results in a dictionary
+all_flights_dict = {}
+
+# Search for flights from home airport to each nearby airport
+for airport in nearby_airports:
+    # Create a new filter for each destination airport
+    filter = flight_filter(updated_checklist['departure_date'],
+                           updated_checklist['home_airport'], airport)
+    # Get flights
+    result = get_flights(filter)
+
+    # Store the results in the dictionary
+    # Add departure and arrival airports to each Flight object
+    for flight in result.flights:
+        flight.departure_airport = updated_checklist['home_airport']
+        flight.arrival_airport = airport
+
+    all_flights_dict[airport] = result.flights
+
+# Example usage to print flight info with new attributes
+flight = result1.flights[0]
+print_flight_info(flight)
+This code ensures that each Flight object now contains the departure_airport and arrival_airport attributes. The print_flight_info function can then be used to print this information as needed.

@@ -25,7 +25,7 @@ def find_shortest_flight(flights: List[Flight]) -> Flight:
     int(flight.duration.split()[0] if 'hr' in flight.duration else 0) * 60 +
     int(flight.duration.split()[2] if 'min' in flight.duration else 0))
 
-    return shortest_flight.duration
+    return shortest_flight
 
 
 
