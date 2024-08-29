@@ -37,8 +37,9 @@ print("The price is currently", result.current_price)
 
 # Display the first flight
 print(result.flights[1])
+print(result.flights[1].price)
 
 # Loop through and print all flights
-for flight in result.flights:
-    print(flight)
+# for flight in result.flights:
+#     print(flight)
 

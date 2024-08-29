@@ -6,6 +6,7 @@ import configparser
 import openai
 from openai import OpenAI
 import pandas as pd
+
 # My functions
 from flight_times import find_shortest_flight
 from check_airports import find_nearby_airports
@@ -84,7 +85,7 @@ if __name__ == '__main__':
         all_flights_dict[airport] = result.flights
 
     # The price is currently... low/typical/high
-    print("The price is currently", result.current_price)
+    # print("The price is currently", result.current_price)
 
     df_flights = pd.DataFrame(all_flights_dict.items())
     df_flights.to_csv('flights_output.csv', index=False)
@@ -104,6 +105,8 @@ if __name__ == '__main__':
 
         # Saves the shortest flight and the airport to a new data structure / dict
         shortest_flights_dict[airport] = shortest_flight_iter  # IDK if I'll need this but leave for now, one method to
+
+        # -----------------------------------------------------------------------------------------------------------
         # store favorite flights
         #print(all_flights_dict.items)
 

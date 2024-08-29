@@ -31,7 +31,7 @@ def print_flight_info(flight, show_airline=True, show_departure=True, show_arriv
         parts.append(f"{flight.duration} total.")
 
     if show_price:
-        parts.append("Price TBD")
+        parts.append(f"Price: {flight.price}")
 
     flight_info = ', '.join(parts)
     print(flight_info)

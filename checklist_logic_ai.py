@@ -3,6 +3,7 @@ from openai import OpenAI
 import configparser
 from datetime import datetime
 import ast
+import logging
 
 def chat_flight_checklist_request_initial(user_message):
     '''
@@ -44,7 +45,11 @@ def chat_flight_checklist_request_initial(user_message):
     response_content = response.choices[0].message['content']
 
     # Chat response type is a string so need to convert it to a dictionary
-    response_dictionary = ast.literal_eval(response_content)
+    try:
+        response_dictionary = ast.literal_eval(response_content)
+    except Exception as error:
+        # logging.info(f"ast.literal conversion triggered error: {error}")
+        response_dictionary = {}
 
     return response_dictionary
 

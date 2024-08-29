@@ -66,26 +66,27 @@ def prompt_user_for_info():
 
         category = categorize_input(user_input)
 
-        print(checklist.values())
+        # print(checklist.values())
 
         if category == 'airport':
             if checklist['home_airport'] is None:
                 checklist['home_airport'] = user_input.upper()
-                print(f"Home airport set to {user_input.upper()}")
+                # print(f"Home airport set to {user_input.upper()}")
             elif checklist['destination'] is None:
                 checklist['destination'] = user_input.upper()
-                print(f"Destination set to {user_input.upper()}")
+                # print(f"Destination set to {user_input.upper()}")
         elif category == 'date':
             if checklist['departure_date'] is None:
                 checklist['departure_date'] = user_input
-                print(f"Departure date set to {user_input}")
+                # print(f"Departure date set to {user_input}")
             elif checklist['return_date'] is None:
                 checklist['return_date'] = user_input
-                print(f"Return date set to {user_input}")
+                # print(f"Return date set to {user_input}")
         else:
-            print("Input not recognized. Please try again.")
+            pass
+            # print("Input not recognized. Please try again.")
 
-    print("All required information has been provided.")
+    # print("All required information has been provided.")
 
 
 if __name__ == '__main__':

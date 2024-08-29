@@ -1,6 +1,6 @@
 # functions having to do with finding local airports
 # also functions handling city names and location references / cleaning up and filtering them
-# so they are processed correctly, such as spell check
+# ,so they are processed correctly, such as spell check
 import pandas as pd
 from geopy.distance import geodesic
 from geopy.geocoders import Nominatim
@@ -130,4 +130,4 @@ if __name__ == '__main__':
     except GeocoderInsufficientPrivileges as e:
         print("Geocoding request was denied. Please check your user agent and try again later.")
     except ValueError as e:
-        print(e)
+        pass  # AKA do nothing
