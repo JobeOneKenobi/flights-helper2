@@ -1,3 +1,53 @@
 config.ini
 "flights/" 
 flights/
+venv/
+
+# OS generated files #
+######################
+.DS_Store
+Thumbs.db
+
+# Temporary files #
+##################
+*.swp
+*.swo
+*.tmp
+*~
+
+# Byte-compiled / optimized / DLL files #
+#########################################
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment directories #
+###################################
+env/
+venv/
+ENV/
+.venv/
+.ENV/
+
+# Python egg files #
+####################
+*.egg
+*.egg-info/
+dist/
+build/
+
+# IDE files #
+#############
+.vscode/
+.idea/
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# IDE build directories #
+#########################
+out/
+target/
+build/
