@@ -5,6 +5,7 @@ from datetime import datetime
 import ast
 import logging
 
+
 def chat_flight_checklist_request_initial(user_message):
     '''
     Takes in any message from a user and parses it for relevant flight details
@@ -24,7 +25,7 @@ def chat_flight_checklist_request_initial(user_message):
     Pertinent Information: {pertinent_info} Use the same date formatting in your responses. If only given one airport / location, assume it is the destination."""
 
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
+        model="gpt-4o-mini",
         messages=[
             {
                 "role": "system",
