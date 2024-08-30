@@ -5,6 +5,9 @@ from datetime import datetime
 import ast
 import logging
 
+# Configure logging to display messages in the console
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def chat_flight_checklist_request_initial(user_message):
     '''
@@ -44,7 +47,7 @@ def chat_flight_checklist_request_initial(user_message):
     )
     # add try / error code here:
     response_content = response.choices[0].message['content']
-    print(response_content)
+    logging.info(f"user flight info request parsed by ChatGPT {response_content}")
 
     # Chat response type is a string so need to convert it to a dictionary
     try:

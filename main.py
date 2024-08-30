@@ -14,7 +14,15 @@ from check_airports import find_nearby_airports
 from checklist_logic_ai import chat_flight_checklist_request_initial
 from checklist_logic import checklist, fix_dates
 from flights_functions import flight_filter
+from flight_times import weighted_sort
 from program_outputs_flight_results import print_flight_info
+
+# For whatever reason this syntax works for setting logging level and the other does not
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# Use this to test logging if logging.info not working
+# logging.warning('Watch out!')  # will print a message to the console
 
 # SETUP --------------------------------------------------------------------------------------------
 # Initiate OpenAI
@@ -33,6 +41,7 @@ openai_api_key = config['openai']['api_key']
 # Configure the api key
 openai.api_key = openai_api_key
 
+
 # MAIN CODE ------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     # STEP 1 - Gather & filter travel request -------------------------------------------------------
@@ -47,10 +56,9 @@ if __name__ == '__main__':
 
     # Extract relevant flight info from user's message using OpenAI ChatGPT 4o mini API
     updated_checklist = chat_flight_checklist_request_initial(user_input)
-    print('Updated_checklist!')
-    print(updated_checklist)
+    logging.info(f"Updated Checklist: \n {updated_checklist}")
 
-    # Add code to fix / check the ai results
+    # Add code to fix / check the AI results
     updated_checklist['departure_date'] = fix_dates(updated_checklist['departure_date'])
     updated_checklist['return_date'] = fix_dates(updated_checklist['return_date'])
 
@@ -59,12 +67,14 @@ if __name__ == '__main__':
     if updated_checklist['home_airport'] is None:
         updated_checklist['home_airport'] = user_config['basic info']['home_airport']
 
-    print('\nFormatted checklist\n', updated_checklist)
-    logging.info('\nFormatted checklist\n', updated_checklist)
+    logging.info(f'\nFormatted checklist\n {updated_checklist}')
 
     # CODE HERE
 
     # Check travel request info is complete
+
+    # Add code to fill in / check / adjust checklist / flight info based off user's preferences file, or in this
+    # case my preference file
 
     # STEP 2 - Initiate flight search & process request --------------------------------------------
     # Find nearby airports to the destination
@@ -92,7 +102,7 @@ if __name__ == '__main__':
     df_flights = pd.DataFrame(all_flights_dict.items())
     df_flights.to_csv('flights_output.csv', index=False)
 
-    # Display / Return Results
+    # Display / Return Results ---------------------------------------------------------------------------------
     print('\n------------------Flight Results---------------\n')
     # Iterate over each destination airport and its flights
     for airport, flights in all_flights_dict.items():
@@ -108,7 +118,18 @@ if __name__ == '__main__':
         # Saves the shortest flight and the airport to a new data structure / dict
         shortest_flights_dict[airport] = shortest_flight_iter  # IDK if I'll need this but leave for now, one method to
 
-        # -----------------------------------------------------------------------------------------------------------
+    # For the purposes of storing or further processing the top 3 flights,
+    # You might want to structure shortest_flights_dict differently, if needed.
+
+    # -----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+    # OTHER CODE / OLD
+
         # store favorite flights
         # print(all_flights_dict.items)
 
