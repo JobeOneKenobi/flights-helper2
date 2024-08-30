@@ -25,7 +25,7 @@ def chat_flight_checklist_request_initial(user_message):
     Pertinent Information: {pertinent_info} Use the same date formatting in your responses. If only given one airport / location, assume it is the destination."""
 
     response = openai.ChatCompletion.create(
-        model="gpt-4o-mini",
+        model="gpt-3.5-turbo-16k",  # "gpt-4o-mini" -> 4o mini tends to fuck things up on formatting
         messages=[
             {
                 "role": "system",
@@ -44,6 +44,7 @@ def chat_flight_checklist_request_initial(user_message):
     )
     # add try / error code here:
     response_content = response.choices[0].message['content']
+    print(response_content)
 
     # Chat response type is a string so need to convert it to a dictionary
     try:

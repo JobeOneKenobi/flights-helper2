@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     # Prompt the user for flight info (For testing purposes, this will be text-based in final version)
     # user_input = input("Hello! Tell me about the flight you'd like to book!")
-    user_input = "RSW to LAX 9/12 - 9/15"
+    user_input = "RSW to DCA 9/13 - 9/15"
     shortest_flights_dict = {}
 
     # Extract relevant flight info from user's message using OpenAI ChatGPT 4o mini API
