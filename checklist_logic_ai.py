@@ -1,4 +1,5 @@
 import openai
+from dateutil import parser
 from openai import OpenAI
 import configparser
 from datetime import datetime
@@ -7,6 +8,14 @@ import logging
 
 # Configure logging to display messages in the console
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+checklist = {
+    'home_airport': None,
+    'destination': None,
+    'departure_date': None,
+    'return_date': None,
+    'airline_preference': None,
+}
 
 
 def chat_flight_checklist_request_initial(user_message):
@@ -58,6 +67,7 @@ def chat_flight_checklist_request_initial(user_message):
 
     return response_dictionary
 
+
 if __name__ == '__main__':
     client = OpenAI()
 
@@ -78,7 +88,20 @@ if __name__ == '__main__':
     print('\n\n Updated travel information: ')
     print(updated_flight_request_info)
 
-# AFTER I have chat process the user's input
-# THEN fill in missing values with pertinent info from the user's file
-# Then check if anything is still missing, if so send updated contents to chat and have it prompt the user
-# with new prompt to fill in remaining data
+    # AFTER I have chat process the user's input
+    # THEN fill in missing values with pertinent info from the user's file
+    # Then check if anything is still missing, if so send updated contents to chat and have it prompt the user
+    # with new prompt to fill in remaining data
+
+
+def fix_dates(input_str):
+    try:
+        # Attempt to parse the date
+        parsed_date = parser.parse(input_str, fuzzy=True, default=datetime.now())
+
+        # Standardize the date format to YYYY-MM-DD
+        standardized_date = parsed_date.strftime('%Y-%m-%d')
+
+        return standardized_date
+    except (ValueError, OverflowError):
+        return None

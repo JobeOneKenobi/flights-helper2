@@ -22,18 +22,6 @@ def is_airport(input_str):
     return re.match(r'^[A-Z]{3}$', input_str.upper())
 
 
-def fix_dates(input_str):
-    try:
-        # Attempt to parse the date
-        parsed_date = parser.parse(input_str, fuzzy=True, default=datetime.now())
-
-        # Standardize the date format to YYYY-MM-DD
-        standardized_date = parsed_date.strftime('%Y-%m-%d')
-
-        return standardized_date
-    except (ValueError, OverflowError):
-        return None
-
 # Currently working on
 # STATUS: basic working, needs good bit of work though
 # This could be a use case for chatGPT-4 / plus, or maybe even community

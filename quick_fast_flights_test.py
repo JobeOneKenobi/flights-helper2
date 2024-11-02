@@ -5,7 +5,7 @@ filter1 = create_filter(
     flight_data=[
         # Include more if it's not a one-way trip
         FlightData(
-            date="2024-09-25",  # Date of departure
+            date="2024-11-25",  # Date of departure
             from_airport="RSW",
             to_airport="DCA"
         ),
@@ -39,6 +39,11 @@ print("The price is currently", result.current_price)
 print(result.flights[1])
 print(result.flights[1].price)
 
+count = 0
+
+print(result.flights[2])
+
+print(result.flights[6])
 # Loop through and print all flights
 # for flight in result.flights:
 #     print(flight)

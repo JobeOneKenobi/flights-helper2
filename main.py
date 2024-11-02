@@ -11,8 +11,7 @@ import logging
 # My functions
 from flight_times import find_shortest_flight
 from check_airports import find_nearby_airports
-from checklist_logic_ai import chat_flight_checklist_request_initial
-from checklist_logic import checklist, fix_dates
+from checklist_logic_ai import chat_flight_checklist_request_initial, fix_dates, checklist
 from flights_functions import flight_filter
 from flight_times import weighted_sort
 from program_outputs_flight_results import print_flight_info
