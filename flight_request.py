@@ -1,4 +1,5 @@
 # Class definition for a flight request object, similar to a user in J.O.E.
+# also includes execution function for gathering all the needed data
 
 import configparser
 from pprint import pprint
@@ -10,12 +11,29 @@ from checklist_logic_ai import chat_flight_checklist_request_initial
 
 
 # main execution script to initiate a flight request and loop until sufficient user data has been supplied
+# see main code below for how to use
 def initiate_flight_request(user_input_raw, active_flight_request=None):
-    # arg: user_input_raw: user message hopefully containing flight info
-    # arg: active_flight_request, active flight request object, if any exists
-    # return: prompt / message to user about what data is needed
-    # return flight_request.is_complete():: TRUE / FALSE
-    # return flight_request object
+    """
+    Initializes or updates a flight request based on user input, prompting for additional information if required.
+
+    Args:
+        user_input_raw (str): The user's input message, ideally containing flight details such as home airport,
+                              destination, departure date, and return date.
+        active_flight_request (FlightRequest, optional): An existing FlightRequest object if one is currently active.
+                                                         If None, a new FlightRequest object will be created.
+
+    Returns:
+        tuple: Contains three elements:
+            - response_message (str): A message prompting the user for missing information, if any. Empty if all
+                                      required information is provided.
+            - flight_request.is_complete() (bool): Indicates whether the flight request contains all required information.
+            - flight_request (FlightRequest): The updated or newly created FlightRequest object.
+
+    Notes:
+        - The OpenAI API key is temporarily loaded from a configuration file (`config.ini`) for local testing purposes.
+          This configuration should be adjusted to securely use environment variables when deployed.
+        - This function utilizes OpenAI's language model to parse and extract key flight information from user input.
+    """
     client = OpenAI()
 
     # REMOVE ALL THIS CONFIG STUFF B4 PUSHING TO SERVER
@@ -48,6 +66,7 @@ def initiate_flight_request(user_input_raw, active_flight_request=None):
         response_message = f"Please provide flight info (missing: {flight_request.get_missing_fields()}): "
     else:
         response_message = ''
+        flight_request.load_preferences()  # once minimum info is filled in, load flight preferences as well
 
     return response_message, flight_request.is_complete(), flight_request
 
@@ -193,76 +212,14 @@ class FlightRequest:
 
 
 if __name__ == '__main__':
-    # # Basic creation and checking
-    # request = FlightRequest()
-    # print("Empty request missing fields:", request.get_missing_fields())
-    #
-    # # Add partial data
-    # request.add_basic_data(destination="LAX", departure_date="2024-06-15")
-    # print("\nAfter adding destination and date:")
-    # print("Missing fields:", request.get_missing_fields())
-    # print("Is complete?", request.is_complete())
-    #
-    # # Load preferences (should get home_airport=RSW from your ini)
-    # request.load_preferences()
-    # print("\nAfter loading preferences:")
-    # print("Home airport:", request.home_airport)
-    # print("Missing fields:", request.get_missing_fields())
-    # print("Is complete?", request.is_complete())
-    #
-    # # Check what preferences got loaded
-    # print("\nPreference details:")
-    # print("Airlines preferred:", request.airlines_preferred)
-    # print("Max stops:", request.max_stops)
-    # print("Layover length (mins):", request.min_layover_length)
-    #
-    # # Test dict conversion
-    # request_dict = request.to_dict()
-    # print("\nDictionary version:")
-    # pprint(request_dict)
-    #
-    # # Test creating new request from dict
-    # new_request = FlightRequest()
-    # new_request.from_dict(request_dict)
-    # print("\nNew request from dict - airlines:", new_request.airlines_preferred)
-
-    ###
-    # client = OpenAI()
-    #
-    # # Before pushing to heroku and making work over text, configure api key to be stored in heroku
-    # # Ask chat for help
-    # config = configparser.ConfigParser()
-    # config.read('config.ini')
-    #
-    # # Pull the api key from the config file
-    # openai_api_key = config['openai']['api_key']
-    # # Configure the api key
-    # openai.api_key = openai_api_key
-    #
-    # newrequest = FlightRequest()
-    #
-    # while not newrequest.is_complete():
-    #     user_message = input(f"Please provide flight info (missing: {newrequest.get_missing_fields()}): ")
-    #     ai_sifted_input_data = chat_flight_checklist_request_initial(user_message)
-    #
-    #     # Only update if key exists and has a non-None value
-    #     for field in ['home_airport', 'destination', 'departure_date', 'return_date']:
-    #         if field in ai_sifted_input_data and ai_sifted_input_data[field] not in [None, "null"]:
-    #             newrequest.add_basic_data(**{field: ai_sifted_input_data[field]})
-    #
-    # print("Flight request complete!")
-    #
-    # pprint(newrequest.to_dict())
-    #
-    # print(newrequest.destination)
-    # print(newrequest.airlines_preferred)
-    # newrequest.airlines_preferred = ['southwest']
-    # print(newrequest.airlines_preferred)
-
     request_complete = False
     prompt = 'input some flight info'
     current_flight_request = None
 
     while request_complete is not True:
         user_input = input(prompt)
-        prompt, current_flight_request, request_complete = initiate_flight_request(user_input, current_flight_request)
+        prompt, request_complete, current_flight_request = initiate_flight_request(user_input, current_flight_request)
+        print(prompt)
+        pprint(current_flight_request.to_dict())
+        print(request_complete)
+        print(current_flight_request.departure_date)

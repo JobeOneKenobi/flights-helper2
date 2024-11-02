@@ -7,6 +7,7 @@ import openai
 from openai import OpenAI
 import pandas as pd
 import logging
+import pprint
 
 # My functions
 from evaluate_flight_times import find_shortest_flight
@@ -15,6 +16,7 @@ from checklist_logic_ai import chat_flight_checklist_request_initial, fix_dates,
 from flights_functions import flight_filter
 from evaluate_flight_times import weighted_sort
 from program_outputs_flight_results import print_flight_info
+from flight_request import FlightRequest, initiate_flight_request
 
 # For whatever reason this syntax works for setting logging level and the other does not
 logger = logging.getLogger()
@@ -41,54 +43,40 @@ openai_api_key = config['openai']['api_key']
 openai.api_key = openai_api_key
 
 
-# MAIN CODE ------------------------------------------------------------------------------------------
-if __name__ == '__main__':
+def process_flight_request_master_function():
     # STEP 1 - Gather & filter travel request -------------------------------------------------------
-    # Imported blank checklist from checklist_logic script
+    request_complete = False
+    prompt = 'input some flight info'
+    current_flight_request = None
 
-    # Optionally pre-fill in checklist here if desired (Not using now, would need to change chat request)
+    while request_complete is not True:
+        user_input = input(prompt)  # This portion will need to be updated later
+        prompt, request_complete, current_flight_request = initiate_flight_request(user_input, current_flight_request)
+        logger.info(prompt)
+        logger.debug(current_flight_request.to_dict())
+        logger.info(request_complete)
 
-    # Prompt the user for flight info (For testing purposes, this will be text-based in final version)
-    # user_input = input("Hello! Tell me about the flight you'd like to book!")
-    user_input = "RSW to DCA 9/13 - 9/15"
-    shortest_flights_dict = {}
+    # STEP 1B - Format data properly
+    if current_flight_request.departure_date:
+        current_flight_request.departure_date = fix_dates(current_flight_request.departure_date)
 
-    # Extract relevant flight info from user's message using OpenAI ChatGPT 4o mini API
-    updated_checklist = chat_flight_checklist_request_initial(user_input)
-    logging.info(f"Updated Checklist: \n {updated_checklist}")
-
-    # Add code to fix / check the AI results
-    updated_checklist['departure_date'] = fix_dates(updated_checklist['departure_date'])
-    updated_checklist['return_date'] = fix_dates(updated_checklist['return_date'])
-
-    # Add info to any missing blanks from user's config file / context
-    # Pulls default home airport if none found / stated in user's request
-    if updated_checklist['home_airport'] is None:
-        updated_checklist['home_airport'] = user_config['basic info']['home_airport']
-
-    logging.info(f'\nFormatted checklist\n {updated_checklist}')
-
-    # CODE HERE
-
-    # Check travel request info is complete
-
-    # Add code to fill in / check / adjust checklist / flight info based off user's preferences file, or in this
-    # case my preference file
+    logging.info(f'\nFormatted flight request data\n {current_flight_request.to_dict}')
 
     # STEP 2 - Initiate flight search & process request --------------------------------------------
     # Find nearby airports to the destination
-    nearby_airports_df = find_nearby_airports(updated_checklist['destination'])
+    nearby_airports_df = find_nearby_airports(current_flight_request.destination)
     print('\nNearby Airports: \n', nearby_airports_df)
     nearby_airports = nearby_airports_df['code'].tolist()  # This includes the input airport if given one
 
     # Prepare to collect all flight results in a dictionary
+    shortest_flights_dict = {}
     all_flights_dict = {}
 
     # Search for flights from home airport to each nearby airport
     for airport in nearby_airports:
         # Create a new filter for each destination airport
-        filter_for_airport = flight_filter(updated_checklist['departure_date'],
-                                           updated_checklist['home_airport'], airport)
+        filter_for_airport = flight_filter(current_flight_request.departure_date,
+                                           current_flight_request.home_airport, airport)
 
         # Get flights
         result = get_flights(filter_for_airport)
@@ -123,25 +111,7 @@ if __name__ == '__main__':
     # -----------------------------------------------------------------------------------------------------------
 
 
-
-
-
-
-    # OTHER CODE / OLD
-
-        # store favorite flights
-        # print(all_flights_dict.items)
-
-        # # Print all flights for this airport
-        # for flight in flights:
-        #     print(flight)
-
-    # # for testing just one flight entry
-    # filter = get_flights(updated_checklist['departure_date'],
-    #                        updated_checklist['home_airport'], updated_checklist['destination'])
-
-    # Un-formatted flight info
-    # print(all_flights_dict['SNA'][0])
-
-    # Formatted flight info
-    # print_flight_info(all_flights_dict['SNA'][0])
+# MAIN CODE ------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+    process_flight_request_master_function()
+    logger.info('DONE!')

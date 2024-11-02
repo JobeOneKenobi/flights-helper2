@@ -31,6 +31,20 @@ In progress / done / todo
 check_airports
     find nearby airports based off city or airport code - done
         add spellcheck / autocorrect for common airports i fly
+flight_request - get necessary info from user to run flight search
+    DONE
+
+NEXT UP: STAGE 2
+work on running flight searches, storing in google sheets, and doing more in depth analysis and comparison of the best flights
+add integration of users preferences such as morning or evening, and ability to compare flights with logic based
+off price and time / duration / layovers
+
+STAGE 3:
+summarize results and send to user
+
+STAGE 4: handling an iterative approach, where user can make adjustments to their preferences, specific requests, etc.
+
+STAGE 5: make it conversational and intuitive where keywords are not as strictly required
 
 Next thing to work on:
 Logic
