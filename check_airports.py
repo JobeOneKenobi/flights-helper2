@@ -1,6 +1,7 @@
 # functions having to do with finding local airports
 # also functions handling city names and location references / cleaning up and filtering them
 # ,so they are processed correctly, such as spell check
+# STATUS: works great, does exactly what I need to, should be no reason to edit or change
 import pandas as pd
 from geopy.distance import geodesic
 from geopy.geocoders import Nominatim
@@ -8,6 +9,10 @@ from geopy.exc import GeocoderInsufficientPrivileges
 import re
 import os
 
+
+# ===============================================================================================================
+# =============================== Primary Execution Function ====================================================
+# ===============================================================================================================
 
 def find_nearby_airports(airport_code_or_city):
     """
@@ -47,6 +52,11 @@ def find_nearby_airports(airport_code_or_city):
 
     return nearby_international_airports
 
+
+# ===============================================================================================================
+# =============================== Helper Functions ==============================================================
+# ===============================================================================================================
+# These functions are ONLY used within the execution function above
 
 def get_coords_airport(airport_code, airports_df):
     """

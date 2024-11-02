@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import openai
 from dateutil import parser
 from openai import OpenAI
@@ -68,6 +70,19 @@ def chat_flight_checklist_request_initial(user_message):
     return response_dictionary
 
 
+def fix_dates(input_str):
+    try:
+        # Attempt to parse the date
+        parsed_date = parser.parse(input_str, fuzzy=True, default=datetime.now())
+
+        # Standardize the date format to YYYY-MM-DD
+        standardized_date = parsed_date.strftime('%Y-%m-%d')
+
+        return standardized_date
+    except (ValueError, OverflowError):
+        return None
+
+
 if __name__ == '__main__':
     client = OpenAI()
 
@@ -82,26 +97,23 @@ if __name__ == '__main__':
     openai.api_key = openai_api_key
 
     # For testing purposes, prompt the user, this will be text-based in final version
-    user_input = input('where would you like to go?')
-
-    updated_flight_request_info = chat_flight_checklist_request_initial(user_input)
-    print('\n\n Updated travel information: ')
-    print(updated_flight_request_info)
+    # user_input = input('where would you like to go?')
+    #
+    # updated_flight_request_info = chat_flight_checklist_request_initial(user_input)
+    # print('\n\n Updated travel information: ')
+    # print(updated_flight_request_info)
 
     # AFTER I have chat process the user's input
     # THEN fill in missing values with pertinent info from the user's file
     # Then check if anything is still missing, if so send updated contents to chat and have it prompt the user
     # with new prompt to fill in remaining data
 
+    user_message = input('gimme some info')
 
-def fix_dates(input_str):
-    try:
-        # Attempt to parse the date
-        parsed_date = parser.parse(input_str, fuzzy=True, default=datetime.now())
+    ai_sifted_input_data = chat_flight_checklist_request_initial(user_message)
 
-        # Standardize the date format to YYYY-MM-DD
-        standardized_date = parsed_date.strftime('%Y-%m-%d')
+    pprint(ai_sifted_input_data)
 
-        return standardized_date
-    except (ValueError, OverflowError):
-        return None
+
+
+

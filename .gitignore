@@ -2,6 +2,8 @@ config.ini
 "flights/" 
 flights/
 venv/
+imported from joe/
+
 
 # OS generated files #
 ######################

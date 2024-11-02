@@ -117,8 +117,6 @@ def convert_to_minutes(duration_str):
         logging.error(f"Invalid duration format '{duration_str}': {e}")
         raise ValueError(f"Cannot convert duration string to minutes: '{duration_str}'") from e
 
-
-
 # ----------------------------------------------------------------------------------------------------------------
 
 
