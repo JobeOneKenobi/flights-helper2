@@ -17,6 +17,7 @@ from flights_functions import flight_filter
 from evaluate_flight_times import weighted_sort
 from program_outputs_flight_results import print_flight_info
 from flight_request import FlightRequest, initiate_flight_request
+from flight_results import FlightResults
 
 # For whatever reason this syntax works for setting logging level and the other does not
 logger = logging.getLogger()
@@ -84,29 +85,43 @@ def process_flight_request_master_function():
         # Store the results in the dictionary
         all_flights_dict[airport] = result.flights
 
-    # Read / extract the dictionary into a pandas dataframe then save it to a csv?
-    # Not positive on these two lines of code
-    df_flights = pd.DataFrame(all_flights_dict.items())
-    df_flights.to_csv('flights_output.csv', index=False)
+    # Initialize FlightResults with your dictionary of flights
+    flight_results = FlightResults(all_flights_dict, current_flight_request)
+
+    # Example of using multiple filters
+    filtered_results = (flight_results
+                        .filter_by_stops(0)  # Uses max_stops from your preferences
+                        .filter_by_destination_airport('DCA')
+                        .get_results())  # Get as DataFrame
+
+    # STATUS: WORKING
+    # TODO: add much more functionality to FlightResults class and make a seperate class / module for ai powered
+    # flight comparison
+    # Print more useful information
+    print("\n-----------------Filtered Flight Results----------------\n")
+    print(f"Found {len(filtered_results)} flights matching criteria:")
+    pd.set_option('display.max_columns', None)  # Show all columns
+    pd.set_option('display.expand_frame_repr', False)  # Prevent wrapping
+    print(filtered_results[['airline', 'departure', 'arrival', 'duration', 'stops', 'price']])
 
     # Display / Return Results ---------------------------------------------------------------------------------
-    print('\n------------------Flight Results---------------\n')
-    # Iterate over each destination airport and its flights
-    for airport, flights in all_flights_dict.items():
-        print(f"\nFlights to {airport}:")
-
-        # Find and print the shortest flight
-        print(f"The shortest flight to {airport} is:")
-        shortest_flight_iter = find_shortest_flight(flights)  # Finds the shortest flight to this airport
-
-        # Prints shortest flight info
-        print_flight_info(shortest_flight_iter, show_duration=True)
-
-        # Saves the shortest flight and the airport to a new data structure / dict
-        shortest_flights_dict[airport] = shortest_flight_iter  # IDK if I'll need this but leave for now, one method to
-
-    # For the purposes of storing or further processing the top 3 flights,
-    # You might want to structure shortest_flights_dict differently, if needed.
+    # print('\n------------------Flight Results---------------\n')
+    # # Iterate over each destination airport and its flights
+    # for airport, flights in all_flights_dict.items():
+    #     print(f"\nFlights to {airport}:")
+    #
+    #     # Find and print the shortest flight
+    #     print(f"The shortest flight to {airport} is:")
+    #     shortest_flight_iter = find_shortest_flight(flights)  # Finds the shortest flight to this airport
+    #
+    #     # Prints shortest flight info
+    #     print_flight_info(shortest_flight_iter, show_duration=True)
+    #
+    #     # Saves the shortest flight and the airport to a new data structure / dict
+    #     shortest_flights_dict[airport] = shortest_flight_iter  # IDK if I'll need this but leave for now, one method to
+    #
+    # # For the purposes of storing or further processing the top 3 flights,
+    # # You might want to structure shortest_flights_dict differently, if needed.
 
     # -----------------------------------------------------------------------------------------------------------
 
